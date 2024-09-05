@@ -1,0 +1,35 @@
+<section class="login-container">
+   
+<form class="form" [formGroup]="form" (ngSubmit)="handleLogIn()">
+    <div class="form-title-container">
+    <p class="login-title">Login</p>
+    @if (falseCredentials) {
+        <p class="incorrect-credentials-error">Incorrect username or password</p>
+       }
+       @if(formInvalid){
+        <p class="all-fields-error">Please fill out all fields</p>
+       }
+</div>
+   <div class="name-div">
+    <label for="admin-name" [ngClass]="{'red-text':adminNameValidation ||falseCredentials|| formInvalid}">Username</label>
+    <br/>
+    <input type="text" name="admin-name" formControlName="adminName" [ngClass]="{'red-bgc-onRrror':adminNameValidation||falseCredentials||formInvalid }">
+    @if (adminNameValidation) {
+        <p class="username-error">Please enter username</p>
+    }
+   </div>
+   <div class="password-div"> 
+    <label for="password" [ngClass]="{'red-text':adminPasswordValidation||falseCredentials}">Password</label>
+    <br/>
+    <input type="password" name="password" formControlName="password" [ngClass]="{'red-bgc-onRrror':adminPasswordValidation ||falseCredentials|| formInvalid}">
+    @if (adminPasswordValidation) {
+        <p class="password-error">Please enter password</p>
+    }
+</div>
+    <button class="login-btn">LogIn</button>
+   
+
+  
+</form>
+
+</section>

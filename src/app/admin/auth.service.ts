@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
     providedIn:'root'
 })
 export class AuthService{
+   name:string="Kato"
     isAuthanticated=false;
     router=inject(Router)
    loginFn(form:FormGroup){

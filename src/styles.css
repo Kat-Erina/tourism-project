@@ -66,6 +66,7 @@ font-family: "Merriweather", serif
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100vh;
     padding: 1rem;
     align-items: center;
    
@@ -114,3 +115,16 @@ font-family: "Merriweather", serif
     
 }
 .red-text{color:red}
+
+@media screen and (min-width: 768px) {
+  .login-container{
+    align-items: center;
+    justify-content: center;
+  }
+  .form{
+    width: 40%;
+    height: 50%;
+    background-color: rgb(203, 244, 230);
+   
+}
+}

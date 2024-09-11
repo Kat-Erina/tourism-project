@@ -1,25 +1,36 @@
-import { inject, Injectable } from "@angular/core";
-import { adminCredentials } from "../dummyData";
+import { DestroyRef, inject, Injectable, signal } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
+import { HttpClient, HttpRequest, HttpResponse } from "@angular/common/http";
 
 @Injectable({
     providedIn:'root'
 })
 export class AuthService{
-   name:string="Kato"
-    isAuthanticated=false;
-    router=inject(Router)
+  request=inject(HttpClient)
+  isAuthanticated=signal(false);
+   error=signal(true)
+    falseCredentials=signal(false);
+    destroyRef=inject(DestroyRef);
+router=inject(Router)
+
    loginFn(form:FormGroup){
-        if(form.value.adminName===adminCredentials.name && form.value.password===adminCredentials.password){ 
-                this.isAuthanticated=true;
-                this.router.navigate(['admin-space'])
-                return true
-                  }
-                  else {
-                this.isAuthanticated=false;
-                return false
-            }
-}
+    let {username, password}=form.value;
+    let data={username, password};
+    return this.request.post("/api/Authorization/LogIn", data, { observe: 'response' })
+          }
+
+handleLogIn(form:FormGroup){
+  let subscription=this.loginFn(form).subscribe({next:(response)=>{
+   if(response.status===200){
+    window.localStorage.setItem('response',JSON.stringify(response?.body))
+ this.isAuthanticated.set(true);
+      this.router.navigate(['/admin-space'])
+       }
+  }, 
+  error:(error)=>{ this.falseCredentials.set(!error.ok)}
+}, 
+)
+this.destroyRef.onDestroy(()=>{subscription.unsubscribe()})}
 }
   

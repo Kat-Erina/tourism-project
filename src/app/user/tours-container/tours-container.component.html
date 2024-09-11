@@ -1,0 +1,6 @@
+<p>tours-container works!</p>
+<section>
+    @for(tour of toursData; track tour.id){
+        <app-tour-card [tourData]="tour"></app-tour-card>
+    }
+</section>

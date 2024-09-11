@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-login-form',
@@ -12,14 +12,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login-form.component.css'
 })
 export class LoginFormComponent implements OnInit {
-form=new FormGroup({adminName:new FormControl("", {validators:[Validators.required]}), password:new FormControl("", {validators:[Validators.required]}) })
-formInvalid=false;
-router=inject(Router);
-route=inject(ActivatedRoute);
+form=new FormGroup({username:new FormControl("", {validators:[Validators.required]}), password:new FormControl("", {validators:[Validators.required]}) })
 authService=inject(AuthService);
-falseCredentials=false;
+falseCredentials=this.authService.falseCredentials;
+formInvalid=signal(false);
+
 get adminNameValidation(){
-  return this.form.controls.adminName.dirty&&this.form.controls.adminName.invalid
+  return this.form.controls.username.dirty&&this.form.controls.username.invalid
 }
 
 get adminPasswordValidation(){
@@ -27,31 +26,20 @@ get adminPasswordValidation(){
 }
 
 ngOnInit(): void {
+  // let data=window.localStorage.getItem('response');
+  // if(data){
+  //   let obj=JSON.parse(data);
+  //   console.log(obj.accessToken)
+
+  // }
   this.form.valueChanges.subscribe(()=>{
-    // this.checkFormValidationFn();
-    if(this.adminNameValidation&&this.adminPasswordValidation){this.checkFormValidationFn();}
-    this.falseCredentials=false
+    if(this.adminNameValidation&&this.adminPasswordValidation){this.formInvalid.set(this.form.invalid)}
   })
 }
 
-checkFormValidationFn(){
-
-  this.formInvalid=this.form.invalid
-}
-handleLogIn(){
-if(!this.form.invalid){
-  let login=this.authService.loginFn(this.form)
-  if(login){
-   this.formInvalid=false;
-  }
-  else{ 
-    this.falseCredentials=true;
- }
- }
- else if(this.form.invalid){
-  // if(!this.adminNameValidation){this.formInvalid=true}
-  // this.formInvalid=true; 
-  // this.form.reset() 
-}
-}
+loginFunction(){
+  if(!this.form.invalid){ 
+    this.formInvalid.set(this.form.invalid);
+    this.authService.handleLogIn(this.form)}
+  else{this.formInvalid.set(this.form.invalid)}}
 }
